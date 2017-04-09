@@ -1,306 +1,127 @@
+###############################################################
+#### GLOBAL AND CONSTANT DECLARATIONS
+###############################################################
+.global ADDR_CHAR
+.global ADDR_PUSHBUTTONS
+.global DRAW_INDICATOR_CTRL
 
 .equ ADDR_CHAR, 0x09000000
 .equ ADDR_PUSHBUTTONS, 0xFF200050
+
+.equ FIRST_OFFSET_1, 1290
+.equ FIRST_OFFSET_2, 1291
+.equ FIRST_OFFSET_3, 1292
+
+.equ SECOND_OFFSET_1, 1678
+.equ SECOND_OFFSET_2, 1679
+.equ SECOND_OFFSET_3, 1680
+
+.equ THIRD_OFFSET_1, 2062
+.equ THIRD_OFFSET_2, 2063
+.equ THIRD_OFFSET_3, 2064
+
+.equ FOURTH_OFFSET_1, 2446
+.equ FOURTH_OFFSET_2, 2447
+.equ FOURTH_OFFSET_3, 2448
+
+###############################################################
+#### PUSH BUTTON INTERRUPTS
+###############################################################
+.section .exceptions, "ax"
+
+ISR:
+	
+
 
 ###############################################################
 #### DATA SECTION
 ###############################################################
 
 .data
-indicator_offset:
-	.word 1290
-	.word 1291
-	.word 1292
+prev_state:
+	.word  0
+
+curr_state:
+	.word 0
 
 .text
 ###############################################################
 #### DRAWING START
 ###############################################################
+
+/*	r3 - address of character buffer
+	r5 - ASCII code of character to be drawn
+	r6 - counter for buffer offset
+	r7 - max value of buffer offset
+*/
+
 .global _start
 _start:
+
+# ENABLE INTERRUPTS
+	movia r2,ADDR_PUSHBUTTONS
+	movia r3,0x02	  # Enable interrrupt mask = 0010
+	stwio r3,8(r2)  # Enable interrupts on pushbutton(s) 1
+	stwio r3,12(r2) # Clear edge capture register to prevent unexpected interrupt
+
+	movia r2,0x02	# 0...10
+	wrctl ctl3,r2   # Enable bit 1 - Pushbuttons use IRQ 1
+
+	movia r2,1
+	wrctl ctl0,r2   # Enable global Interrupts on Processor
 	
-	movia r3, ADDR_CHAR
+# INITIALIZE COUNTERS FOR CLEAR_SCREEN
 	movi r6, 0		# offset counter
 	movi r7, 7632 	# max offset
+	br CLEAR_SCREEN
 
 CLEAR_SCREEN:
+
 	# Clears entire screen
+	movia r3, ADDR_CHAR
 	movi r5, SPACE
 	stbio r5, 0(r3)
 	addi r3, r3, 1
 	addi r6, r6, 1
 	bne r6, r7, CLEAR_SCREEN
-
 	
-DRAW_TITLE:
-	# write title "GUITAR PLAYER" to top of display
-	# first character displayed at (33, 2)
+	br DRAW_TITLE
+		
+DRAW_INDICATOR_CTRL:
+	
+
+DRAW_INDICATOR_1:
 	movia r3, ADDR_CHAR
-	movi r5, CHAR_G
-	stbio r5, 289(r3)
-	movi r5, CHAR_U
-	stbio r5, 290(r3)
-	movi r5, CHAR_I
-	stbio r5, 291(r3)
-	movi r5, CHAR_T
-	stbio r5, 292(r3)
-	movi r5, CHAR_A
-	stbio r5, 293(r3)
-	movi r5, CHAR_R
-	stbio r5, 294(r3)
-	
-	movi r5, SPACE
-	stbio r5, 295(r3)
-	
-	movi r5, CHAR_P
-	stbio r5, 296(r3)
-	movi r5, CHAR_L
-	stbio r5, 297(r3)
-	movi r5, CHAR_A
-	stbio r5, 298(r3)
-	movi r5, CHAR_Y
-	stbio r5, 299(r3)
-	movi r5, CHAR_E
-	stbio r5, 300(r3)
-	movi r5, CHAR_R
-	stbio r5, 301(r3)
-	
-	br DRAW_PAT_INTRO
-	
-DRAW_PAT_INTRO: # "Select a Pattern:"
-	movia r3, ADDR_CHAR
-	
-	movi r5, CHAR_S
-	stbio r5, 778(r3)
-	movi r5, CHAR_e
-	stbio r5, 779(r3)
-	movi r5, CHAR_l
-	stbio r5, 780(r3)
-	movi r5, CHAR_e
-	stbio r5, 781(r3)
-	movi r5, CHAR_c
-	stbio r5, 782(r3)
-	movi r5, CHAR_t
-	stbio r5, 783(r3)
-	movi r5, SPACE
-	stbio r5, 784(r3)
-	movi r5, CHAR_A
-	stbio r5, 785(r3)
-	movi r5, SPACE
-	stbio r5, 786(r3)
-	movi r5, CHAR_P
-	stbio r5, 787(r3)
-	movi r5, CHAR_a
-	stbio r5, 788(r3)
-	movi r5, CHAR_t
-	stbio r5, 789(r3)
-	movi r5, CHAR_t
-	stbio r5, 790(r3)
-	movi r5, CHAR_e
-	stbio r5, 791(r3)
-	movi r5, CHAR_r
-	stbio r5, 792(r3)
-	movi r5, CHAR_n
-	stbio r5, 793(r3)
-	movi r5, COLON
-	stbio r5, 794(r3)
-
-DRAW_FIRST_CHOICE: 			# "1.  D - D - D - D - "
-							
-	movi r5, NUM_1
-	stbio r5, 1294(r3)
-	movi r5, DOT
-	stbio r5, 1295(r3)
-	movi r5, SPACE
-	stbio r5, 1296(r3)
-	movi r5, SPACE
-	stbio r5, 1297(r3)
-	
-	movi r5, CHAR_D
-	stbio r5, 1298(r3)
-	movi r5, SPACE
-	stbio r5, 1299(r3)
-	movi r5, DASH
-	stbio r5, 1300(r3)
-	movi r5, SPACE
-	stbio r5, 1301(r3)
-	
-	movi r5, CHAR_D
-	stbio r5, 1302(r3)
-	movi r5, SPACE
-	stbio r5, 1303(r3)
-	movi r5, DASH
-	stbio r5, 1304(r3)
-	movi r5, SPACE
-	stbio r5, 1305(r3)
-	
-	movi r5, CHAR_D
-	stbio r5, 1306(r3)
-	movi r5, SPACE
-	stbio r5, 1307(r3)
-	movi r5, DASH
-	stbio r5, 1308(r3)
-	movi r5, SPACE
-	stbio r5, 1309(r3)
-	
-	movi r5, CHAR_D
-	stbio r5, 1310(r3)
-	movi r5, SPACE
-	stbio r5, 1311(r3)
-	movi r5, DASH
-	stbio r5, 1312(r3)
-	movi r5, SPACE
-	stbio r5, 1313(r3)
-	
-DRAW_SECOND_CHOICE:	# "2.  D U D U D U D U "
-	
-	movi r5, NUM_2
-	stbio r5, 1678(r3)
-	movi r5, DOT
-	stbio r5, 1679(r3)
-	movi r5, SPACE
-	stbio r5, 1680(r3)
-	movi r5, SPACE
-	stbio r5, 1681(r3)
-	
-	movi r5, CHAR_D
-	stbio r5, 1682(r3)
-	movi r5, SPACE
-	stbio r5, 1683(r3)
-	movi r5, CHAR_U
-	stbio r5, 1684(r3)
-	movi r5, SPACE
-	stbio r5, 1685(r3)
-	
-	movi r5, CHAR_D
-	stbio r5, 1686(r3)
-	movi r5, SPACE
-	stbio r5, 1687(r3)
-	movi r5, CHAR_U
-	stbio r5, 1688(r3)
-	movi r5, SPACE
-	stbio r5, 1689(r3)
-	
-	movi r5, CHAR_D
-	stbio r5, 1690(r3)
-	movi r5, SPACE
-	stbio r5, 1691(r3)
-	movi r5, CHAR_U
-	stbio r5, 1692(r3)
-	movi r5, SPACE
-	stbio r5, 1693(r3)
-	
-	movi r5, CHAR_D
-	stbio r5, 1694(r3)
-	movi r5, SPACE
-	stbio r5, 1695(r3)
-	movi r5, CHAR_U
-	stbio r5, 1696(r3)
-	movi r5, SPACE
-	stbio r5, 1697(r3)
-	
-DRAW_THIRD_CHOICE:	# "3.  D - D U D - D U "
-	
-	movi r5, NUM_3
-	stbio r5, 2062(r3)
-	movi r5, DOT
-	stbio r5, 2063(r3)
-	movi r5, SPACE
-	stbio r5, 2064(r3)
-	movi r5, SPACE
-	stbio r5, 2065(r3)
-	
-	movi r5, CHAR_D
-	stbio r5, 2066(r3)
-	movi r5, SPACE
-	stbio r5, 2067(r3)
-	movi r5, DASH
-	stbio r5, 2068(r3)
-	movi r5, SPACE
-	stbio r5, 2069(r3)
-	
-	movi r5, CHAR_D
-	stbio r5, 2070(r3)
-	movi r5, SPACE
-	stbio r5, 2071(r3)
-	movi r5, CHAR_U
-	stbio r5, 2072(r3)
-	movi r5, SPACE
-	stbio r5, 2073(r3)
-	
-	movi r5, CHAR_D
-	stbio r5, 2074(r3)
-	movi r5, SPACE
-	stbio r5, 2075(r3)
-	movi r5, DASH
-	stbio r5, 2076(r3)
-	movi r5, SPACE
-	stbio r5, 2077(r3)
-	
-	movi r5, CHAR_D
-	stbio r5, 2078(r3)
-	movi r5, SPACE
-	stbio r5, 2079(r3)
-	movi r5, CHAR_U
-	stbio r5, 2080(r3)
-	movi r5, SPACE
-	stbio r5, 2081(r3)	
-	
-	
-DRAW_FOURTH_CHOICE:	# "4.  D - D U D - D U "
-	
-	movi r5, NUM_4
-	stbio r5, 2446(r3)
-	movi r5, DOT
-	stbio r5, 2447(r3)
-	movi r5, SPACE
-	stbio r5, 2448(r3)
-	movi r5, SPACE
-	stbio r5, 2449(r3)
-	
-	movi r5, CHAR_D
-	stbio r5, 2450(r3)
-	movi r5, SPACE
-	stbio r5, 2451(r3)
-	movi r5, DASH
-	stbio r5, 2452(r3)
-	movi r5, SPACE
-	stbio r5, 2453(r3)
-	
-	movi r5, CHAR_D
-	stbio r5, 2454(r3)
-	movi r5, SPACE
-	stbio r5, 2455(r3)
-	movi r5, DASH
-	stbio r5, 2456(r3)
-	movi r5, SPACE
-	stbio r5, 2457(r3)
-	
-	movi r5, CHAR_D
-	stbio r5, 2458(r3)
-	movi r5, SPACE
-	stbio r5, 2459(r3)
-	movi r5, CHAR_U
-	stbio r5, 2460(r3)
-	movi r5, SPACE
-	stbio r5, 2461(r3)
-	
-	movi r5, CHAR_D
-	stbio r5, 2462(r3)
-	movi r5, SPACE
-	stbio r5, 2463(r3)
-	movi r5, CHAR_U
-	movi r5, CHAR_U
-	stbio r5, 2464(r3)
-	movi r5, SPACE
-	stbio r5, 2465(r3)	
-
-DRAW_INDICATOR:
 	movi r5, GREATER
-	stbio r5, 1290(r3)	
-	stbio r5, 1291(r3)
-	stbio r5, 1292(r3)
+	stbio r5, FIRST_OFFSET_1(r3)	
+	stbio r5, FIRST_OFFSET_2(r3)
+	stbio r5, FIRST_OFFSET_3(r3)
+	br POLL_INPUT
 
+DRAW_INDICATOR_2:
+	movia r3, ADDR_CHAR
+	movi r5, GREATER
+	stbio r5, SECOND_OFFSET_1(r3)	
+	stbio r5, SECOND_OFFSET_2(r3)
+	stbio r5, SECOND_OFFSET_3(r3)
+	br POLL_INPUT
+	
+DRAW_INDICATOR_3:
+	movia r3, ADDR_CHAR
+	movi r5, GREATER
+	stbio r5, THIRD_OFFSET_1(r3)	
+	stbio r5, THIRD_OFFSET_2(r3)
+	stbio r5, THIRD_OFFSET_3(r3)
+	br POLL_INPUT
+	
+DRAW_INDICATOR_4:
+	movia r3, ADDR_CHAR
+	movi r5, GREATER
+	stbio r5, FOURTH_OFFSET_1(r3)	
+	stbio r5, FOURTH_OFFSET_2(r3)
+	stbio r5, FOURTH_OFFSET_3(r3)
+	br POLL_INPUT
+	
 POLL_INPUT:
 	
 	br POLL_INPUT
