@@ -26,7 +26,7 @@ _start:
 
 loopforever:
 
-	call pattern3
+	call upstrum
 	
 	br loopforever                     # Loop forever
 
@@ -252,6 +252,7 @@ pattern4:
 ###############################################################################
 #########################       Strum Functions       #########################
 ###############################################################################
+
 downstrum:
 
 	subi sp,sp,4                       # forward prologue
@@ -289,6 +290,12 @@ upstrum:
 	call backward                      # Strum up
 	ldw ra,0(sp)                       # backward epilogue
 	addi sp,sp,4                       # backward epilogue
+
+	subi sp,sp,4                       # backward prologue
+	stw ra,0(sp)                       # backward prologue
+	call backward                      # Strum up
+	ldw ra,0(sp)                       # backward epilogue
+	addi sp,sp,4                       # backward epilogue
 	
 	subi sp,sp,4                       # timer prologue
 	stw ra,0(sp)                       # timer prologue
@@ -301,12 +308,6 @@ upstrum:
 ###############################################################################
 
 fullrest:
-
-	subi sp,sp,4                       # rest prologue
-	stw ra,0(sp)                       # rest prologue
-	call rest                          # Hold position
-	ldw ra,0(sp)                       # rest epilogue
-	addi sp,sp,4                       # rest epilogue
 
 	subi sp,sp,4                       # rest prologue
 	stw ra,0(sp)                       # rest prologue
@@ -328,7 +329,7 @@ fullrest:
 
 forward:
 
-    movia r9, 0xFFFFFFFE               # Motor 0 goes forward
+    movia r9, 0xFFFFFFF2               # Motor 0 goes forward
     stwio r9, 0(r8)                    # Reset to the original value
 	
 	subi sp,sp,4                       # Timer prologue
@@ -388,7 +389,7 @@ forwardup:
 
 backward:
 
-    movia r9, 0xFFFFFFFC               # Motor 0 goes backward 
+    movia r9, 0xFFFFFFF0               # Motor 0 goes backward 
     stwio r9, 0(r8)                    # Reset to the original value
 	
 	subi sp,sp,4                       # Timer prologue
