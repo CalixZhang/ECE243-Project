@@ -26,7 +26,7 @@ _start:
 
 loopforever:
 
-	call upstrum
+	call pattern2
 	
 	br loopforever                     # Loop forever
 
@@ -97,11 +97,23 @@ pattern2:
 	ldw ra,0(sp)                       # downstrum epilogue
 	addi sp,sp,4                       # downstrum epilogue	
 	
+	subi sp,sp,4                       # fullrest prologue
+	stw ra,0(sp)                       # fullrest prologue
+	call fullrest                      #                             -
+	ldw ra,0(sp)                       # fullrest epilogue
+	addi sp,sp,4                       # fullrest epilogue	
+	
 	subi sp,sp,4                       # upstrum prologue
 	stw ra,0(sp)                       # upstrum prologue
 	call upstrum                       #                             U
 	ldw ra,0(sp)                       # upstrum epilogue
 	addi sp,sp,4                       # upstrum epilogue	
+	
+	subi sp,sp,4                       # fullrest prologue
+	stw ra,0(sp)                       # fullrest prologue
+	call fullrest                      #                             -
+	ldw ra,0(sp)                       # fullrest epilogue
+	addi sp,sp,4                       # fullrest epilogue	
 	
 	subi sp,sp,4                       # downstrum prologue
 	stw ra,0(sp)                       # downstrum prologue
@@ -109,17 +121,11 @@ pattern2:
 	ldw ra,0(sp)                       # downstrum epilogue
 	addi sp,sp,4                       # downstrum epilogue	
 	
-	subi sp,sp,4                       # upstrum prologue
-	stw ra,0(sp)                       # upstrum prologue
-	call upstrum                       #                             U
-	ldw ra,0(sp)                       # upstrum epilogue
-	addi sp,sp,4                       # upstrum epilogue	
-	
-	subi sp,sp,4                       # downstrum prologue
-	stw ra,0(sp)                       # downstrum prologue
-	call downstrum                     #                             D
-	ldw ra,0(sp)                       # downstrum epilogue
-	addi sp,sp,4                       # downstrum epilogue	
+	subi sp,sp,4                       # fullrest prologue
+	stw ra,0(sp)                       # fullrest prologue
+	call fullrest                      #                             -
+	ldw ra,0(sp)                       # fullrest epilogue
+	addi sp,sp,4                       # fullrest epilogue	
 	
 	subi sp,sp,4                       # upstrum prologue
 	stw ra,0(sp)                       # upstrum prologue
@@ -127,17 +133,11 @@ pattern2:
 	ldw ra,0(sp)                       # upstrum epilogue
 	addi sp,sp,4                       # upstrum epilogue	
 	
-	subi sp,sp,4                       # downstrum prologue
-	stw ra,0(sp)                       # downstrum prologue
-	call downstrum                     #                             D
-	ldw ra,0(sp)                       # downstrum epilogue
-	addi sp,sp,4                       # downstrum epilogue	
-	
-	subi sp,sp,4                       # upstrum prologue
-	stw ra,0(sp)                       # upstrum prologue
-	call upstrum                       #                             U
-	ldw ra,0(sp)                       # upstrum epilogue
-	addi sp,sp,4                       # upstrum epilogue	
+	subi sp,sp,4                       # fullrest prologue
+	stw ra,0(sp)                       # fullrest prologue
+	call fullrest                      #                             -
+	ldw ra,0(sp)                       # fullrest epilogue
+	addi sp,sp,4                       # fullrest epilogue	
 	
 	ret
 
@@ -254,7 +254,7 @@ pattern4:
 ###############################################################################
 
 downstrum:
-
+	
 	subi sp,sp,4                       # forward prologue
 	stw ra,0(sp)                       # forward prologue
 	call forward                       # Strum down
@@ -330,16 +330,7 @@ fullrest:
 forward:
 
     movia r9, 0xFFFFFFF2               # Motor 0 goes forward
-    stwio r9, 0(r8)                    # Reset to the original value
-	
-	subi sp,sp,4                       # Timer prologue
-	stw ra,0(sp)                       # Timer prologue	
-	call TIMERB                        # Call the timer subroutine
-	ldw ra,0(sp)                       # Timer epilogue
-	addi sp,sp,4                       # Timer epilogue
-	
-    movia r9, 0xFFFFFFFF               # Motor 0 does nothing.
-    stwio r9, 0(r8)                    # Reset to the original value
+    stwio r9, 0(r8)                    # Reset to the original values
 
 	subi sp,sp,4                       # Timer prologue
 	stw ra,0(sp)                       # Timer prologue	
@@ -431,17 +422,17 @@ backwardup:
 	ldw ra,0(sp)                       # Timer epilogue
 	addi sp,sp,4                       # Timer epilogue
 	
-	subi sp,sp,4                       # Timer prologue
-	stw ra,0(sp)                       # Timer prologue	
-	call TIMERB                        # Call the timer subroutine
-	ldw ra,0(sp)                       # Timer epilogue
-	addi sp,sp,4                       # Timer epilogue
+	#subi sp,sp,4                       # Timer prologue
+	#stw ra,0(sp)                       # Timer prologue	
+	#call TIMERB                        # Call the timer subroutine
+	#ldw ra,0(sp)                       # Timer epilogue
+	#addi sp,sp,4                       # Timer epilogue
 	
-	subi sp,sp,4                       # Timer prologue
-	stw ra,0(sp)                       # Timer prologue	
-	call TIMERB                        # Call the timer subroutine
-	ldw ra,0(sp)                       # Timer epilogue
-	addi sp,sp,4                       # Timer epilogue
+	#subi sp,sp,4                       # Timer prologue
+	#stw ra,0(sp)                       # Timer prologue	
+	#call TIMERB                        # Call the timer subroutine
+	#ldw ra,0(sp)                       # Timer epilogue
+	#addi sp,sp,4                       # Timer epilogue
 	
 	ret
 
@@ -558,4 +549,3 @@ timeLoopB:     #looping to check the condition
 	ret
 
 ###############################################################################
-	
