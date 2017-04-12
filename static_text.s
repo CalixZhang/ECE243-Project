@@ -134,7 +134,7 @@ DRAW_FIRST_CHOICE: 			# "1.  D - D - D - D - "
 	
 	br DRAW_SECOND_CHOICE
 	
-DRAW_SECOND_CHOICE:	# "2.  D U D U D U D U "
+DRAW_SECOND_CHOICE:	# "2.  D - U - D - U - "
 	
 	movia r3, ADDR_CHAR
 	movi r5, NUM_2
@@ -150,16 +150,16 @@ DRAW_SECOND_CHOICE:	# "2.  D U D U D U D U "
 	stbio r5, 1682(r3)
 	movi r5, SPACE
 	stbio r5, 1683(r3)
-	movi r5, CHAR_U
+	movi r5, DASH
 	stbio r5, 1684(r3)
 	movi r5, SPACE
 	stbio r5, 1685(r3)
 	
-	movi r5, CHAR_D
+	movi r5, CHAR_U
 	stbio r5, 1686(r3)
 	movi r5, SPACE
 	stbio r5, 1687(r3)
-	movi r5, CHAR_U
+	movi r5, DASH
 	stbio r5, 1688(r3)
 	movi r5, SPACE
 	stbio r5, 1689(r3)
@@ -168,23 +168,23 @@ DRAW_SECOND_CHOICE:	# "2.  D U D U D U D U "
 	stbio r5, 1690(r3)
 	movi r5, SPACE
 	stbio r5, 1691(r3)
-	movi r5, CHAR_U
+	movi r5, DASH
 	stbio r5, 1692(r3)
 	movi r5, SPACE
 	stbio r5, 1693(r3)
 	
-	movi r5, CHAR_D
+	movi r5, CHAR_U
 	stbio r5, 1694(r3)
 	movi r5, SPACE
 	stbio r5, 1695(r3)
-	movi r5, CHAR_U
+	movi r5, DASH
 	stbio r5, 1696(r3)
 	movi r5, SPACE
 	stbio r5, 1697(r3)
 	
 	br DRAW_THIRD_CHOICE
 	
-DRAW_THIRD_CHOICE:	# "3.  D - D U D - D U "
+DRAW_THIRD_CHOICE:	# "3.  U - U - U - U - "
 	
 	movia r3, ADDR_CHAR
 	movi r5, NUM_3
@@ -196,7 +196,7 @@ DRAW_THIRD_CHOICE:	# "3.  D - D U D - D U "
 	movi r5, SPACE
 	stbio r5, 2065(r3)
 	
-	movi r5, CHAR_D
+	movi r5, CHAR_U
 	stbio r5, 2066(r3)
 	movi r5, SPACE
 	stbio r5, 2067(r3)
@@ -205,16 +205,16 @@ DRAW_THIRD_CHOICE:	# "3.  D - D U D - D U "
 	movi r5, SPACE
 	stbio r5, 2069(r3)
 	
-	movi r5, CHAR_D
+	movi r5, CHAR_U
 	stbio r5, 2070(r3)
 	movi r5, SPACE
 	stbio r5, 2071(r3)
-	movi r5, CHAR_U
+	movi r5, DASH
 	stbio r5, 2072(r3)
 	movi r5, SPACE
 	stbio r5, 2073(r3)
 	
-	movi r5, CHAR_D
+	movi r5, CHAR_U
 	stbio r5, 2074(r3)
 	movi r5, SPACE
 	stbio r5, 2075(r3)
@@ -223,11 +223,11 @@ DRAW_THIRD_CHOICE:	# "3.  D - D U D - D U "
 	movi r5, SPACE
 	stbio r5, 2077(r3)
 	
-	movi r5, CHAR_D
+	movi r5, CHAR_U
 	stbio r5, 2078(r3)
 	movi r5, SPACE
 	stbio r5, 2079(r3)
-	movi r5, CHAR_U
+	movi r5, DASH
 	stbio r5, 2080(r3)
 	movi r5, SPACE
 	stbio r5, 2081(r3)	
